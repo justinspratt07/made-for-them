@@ -95,6 +95,11 @@ function classNames(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(" ");
 }
 
+function assetPath(path: string) {
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+  return path.startsWith("/") ? `${basePath}${path}` : path;
+}
+
 function toggleArray<T>(items: T[], item: T) {
   return items.includes(item) ? items.filter((value) => value !== item) : [...items, item];
 }
@@ -899,7 +904,7 @@ function GiftPreviewCard({
     <article className="group grid overflow-hidden border border-[var(--border)] bg-[var(--surface)] shadow-[0_12px_34px_rgba(70,49,35,0.09)] sm:grid-cols-[42%_1fr]">
       <button type="button" onClick={onSelect} className="relative min-h-44 overflow-hidden text-left">
         <Image
-          src={gift.image}
+          src={assetPath(gift.image)}
           alt=""
           fill
           loading={rank === 1 ? "eager" : "lazy"}
@@ -968,7 +973,7 @@ function ResultGroup({
           >
             <button type="button" className="relative block aspect-[4/3] overflow-hidden text-left" onClick={() => onSelect(gift.id)}>
               <Image
-                src={gift.image}
+                src={assetPath(gift.image)}
                 alt=""
                 fill
                 loading={index === 0 ? "eager" : "lazy"}
@@ -1075,7 +1080,7 @@ function GiftDetail({
         <article className="printable-plan border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[var(--shadow)] sm:p-8">
           <div className="grid gap-6 lg:grid-cols-[0.8fr_1fr]">
             <div className="relative aspect-[4/3] overflow-hidden">
-              <Image src={gift.image} alt="" fill sizes="(min-width: 1024px) 42vw, 100vw" className="object-cover" />
+              <Image src={assetPath(gift.image)} alt="" fill sizes="(min-width: 1024px) 42vw, 100vw" className="object-cover" />
             </div>
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--sage)]">Gift plan</p>
