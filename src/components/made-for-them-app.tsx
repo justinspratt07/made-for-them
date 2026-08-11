@@ -1147,6 +1147,39 @@ function GiftDetail({
           <PlanSection title="Tools">
             <Checklist items={gift.tools} />
           </PlanSection>
+          {gift.patternNotes ? (
+            <PlanSection title="Pattern notes">
+              <div className="grid gap-4">
+                <div className="grid gap-3 text-sm sm:grid-cols-2">
+                  {gift.patternNotes.finishedSize ? (
+                    <div className="border border-[var(--border)] bg-[#fff9ed] p-3">
+                      <p className="font-semibold text-[var(--ink)]">Finished size</p>
+                      <p className="mt-1 leading-6 text-[var(--muted)]">{gift.patternNotes.finishedSize}</p>
+                    </div>
+                  ) : null}
+                  {gift.patternNotes.gauge ? (
+                    <div className="border border-[var(--border)] bg-[#fff9ed] p-3">
+                      <p className="font-semibold text-[var(--ink)]">Gauge</p>
+                      <p className="mt-1 leading-6 text-[var(--muted)]">{gift.patternNotes.gauge}</p>
+                    </div>
+                  ) : null}
+                </div>
+                {gift.patternNotes.abbreviations ? (
+                  <div>
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--sage)]">Abbreviations</p>
+                    <div className="flex flex-wrap gap-2">
+                      {gift.patternNotes.abbreviations.map((item) => (
+                        <span key={item} className="mini-tag">
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+                <Checklist items={gift.patternNotes.notes} />
+              </div>
+            </PlanSection>
+          ) : null}
           <PlanSection title="Steps">
             <ol className="grid gap-3">
               {gift.steps.map((step, index) => (

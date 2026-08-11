@@ -98,6 +98,12 @@ export type GiftIdea = {
   materials: string[];
   tools: string[];
   steps: string[];
+  patternNotes?: {
+    finishedSize?: string;
+    gauge?: string;
+    abbreviations?: string[];
+    notes: string[];
+  };
   personalization: string[];
   wrapping: string[];
   supplyCategories: string[];
