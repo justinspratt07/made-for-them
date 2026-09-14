@@ -10,16 +10,18 @@ const client = path.join(dist, "client");
 const worker = path.join(root, "worker", "index.js");
 const hosting = path.join(root, ".openai", "hosting.json");
 
-for (const file of [path.join(out, "index.html"), worker, hosting]) {
+for (const file of [path.join(out, "index.html"), worker]) {
   if (!existsSync(file)) throw new Error("Missing Sites build input: " + file);
 }
 
 rmSync(dist, { recursive: true, force: true });
 mkdirSync(path.join(dist, "server"), { recursive: true });
-mkdirSync(path.join(dist, ".openai"), { recursive: true });
 
 cpSync(out, client, { recursive: true });
 copyFileSync(worker, path.join(dist, "server", "index.js"));
-copyFileSync(hosting, path.join(dist, ".openai", "hosting.json"));
+if (existsSync(hosting)) {
+  mkdirSync(path.join(dist, ".openai"), { recursive: true });
+  copyFileSync(hosting, path.join(dist, ".openai", "hosting.json"));
+}
 
 console.log("Prepared Sites build.");

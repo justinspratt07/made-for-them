@@ -23,6 +23,8 @@
 /build
 
 # misc
+# Local hosting configuration
+/.openai/
 .DS_Store
 *.pem
 
