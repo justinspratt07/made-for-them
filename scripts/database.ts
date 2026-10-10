@@ -15,6 +15,10 @@ async function main() {
   if (source === "starter") {
     throw new Error("Set GIFT_DATA_SOURCE=pglite or postgres in .env.local first.");
   }
+  if (source === "postgres" && command !== "check" &&
+      ["production", "preview"].includes(process.env.APP_DEPLOYMENT ?? "") && !process.env.MIGRATION_DATABASE_URL) {
+    throw new Error("Hosted maintenance requires a separate MIGRATION_DATABASE_URL.");
+  }
   let connection: DatabaseConnection | undefined;
   try {
     connection = await createDatabaseConnection(source, {

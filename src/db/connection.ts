@@ -5,6 +5,13 @@ import type { GiftDataSource } from "./config";
 import * as schema from "./schema";
 
 export type GiftDatabase = PgDatabase<PgQueryResultHKT, typeof schema>;
+export function queryRows<T>(result: unknown): T[] {
+  if (Array.isArray(result)) return result as T[];
+  if (result && typeof result === "object" && "rows" in result && Array.isArray(result.rows)) {
+    return result.rows as T[];
+  }
+  throw new Error("Unexpected database query result.");
+}
 export type DatabaseConnection = {
   db: GiftDatabase;
   migrate: () => Promise<void>;

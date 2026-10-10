@@ -22,7 +22,8 @@ editor require a Next.js server and are not available on GitHub Pages.
 - Supabase PostgreSQL persistence through Drizzle, with PGlite for local development.
 - A password-protected owner editor with search, drafts, publication checks,
   ordered content editing, and protection against stale saves.
-- 24 automated tests for data integrity, matching, validation, sessions, and editing.
+- Automated tests for data integrity, matching, validation, sessions, editing,
+  runtime permissions, client identity, and shared login counters.
 
 ## Technology
 
@@ -83,9 +84,13 @@ retailer links are searches, not live inventory or tracked affiliate links.
 Sharing copies a plan or sends the page link, not a persistent personalized URL.
 Photos use existing assets or hosted HTTPS URLs; direct uploads are not implemented.
 
-The editor supports one owner, not a multi-user account system. Its login limiter
-is scoped to one server process. Public server deployment, shared login limiting,
-cross-device saved ideas, analytics, payments, and affiliate tracking remain future work.
+The editor supports one owner, not a multi-user account system. Hosted login limits
+are client-scoped and shared through PostgreSQL; local development uses a bounded
+in-memory limit. Hosted modes require separate public/editor database roles and
+trusted ingress settings. These changes still require staging and live configuration
+before public deployment. Cross-device saved ideas, analytics, payments, and
+affiliate tracking remain future work.
+See [server readiness](docs/deployment-readiness.md) for deployment controls and gates.
 See the [action plan](docs/action-plan.md) for the roadmap and diagrams.
 
 Author: [Justin Spratt](https://github.com/justinspratt07)

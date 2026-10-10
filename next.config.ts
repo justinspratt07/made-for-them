@@ -9,7 +9,8 @@ const nextConfig: NextConfig = {
   output: isStaticPreview ? "export" : undefined,
   pageExtensions: isStaticPreview ? ["tsx", "ts", "jsx", "js"] :
     ["tsx", "ts", "jsx", "js", "private.tsx", "private.ts"],
-  distDir: process.env.NODE_ENV === "development" ? ".next-dev" :
+  distDir: process.env.ISOLATED_PREVIEW === "true" ? ".next-preview" :
+    process.env.NODE_ENV === "development" ? ".next-dev" :
     isStaticPreview ? undefined : ".next-server",
   serverExternalPackages: ["@electric-sql/pglite", "postgres"],
   basePath: isGithubPages ? "/made-for-them" : undefined,

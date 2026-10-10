@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --hostname 127.0.0.1",
     "build": "next build",
+    "build:server": "node scripts/server-build.mjs",
     "build:static": "node scripts/build-static.mjs",
     "build:github-pages": "node scripts/build-github-pages.mjs",
     "start": "next start",
@@ -14,16 +15,21 @@
     "db:migrate": "tsx scripts/database.ts migrate",
     "db:seed": "tsx scripts/database.ts seed",
     "db:check": "tsx scripts/database.ts check",
-    "test:db": "tsx --test tests/database.test.ts tests/admin.test.ts",
-    "admin:setup": "tsx scripts/admin-setup.ts"
+    "test:db": "tsx --test tests/database.test.ts tests/admin.test.ts tests/deployment.test.ts",
+    "admin:setup": "tsx scripts/admin-setup.ts",
+    "preview:setup": "tsx scripts/preview-setup.ts",
+    "deployment:check": "tsx scripts/deployment-check.ts",
+    "test:preview": "playwright test",
+    "test:postgres": "tsx --test tests/postgres-runtime.test.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.8",
-    "@next/env": "16.3.0",
+    "@next/env": "16.3.8",
     "drizzle-orm": "0.45.2",
+    "ipaddr.js": "^2.5.0",
     "iron-session": "^8.0.4",
     "lucide-react": "^1.30.0",
-    "next": "16.3.0",
+    "next": "16.3.8",
     "postgres": "3.4.8",
     "react": "19.2.8",
     "react-dom": "19.2.8",
@@ -31,13 +37,15 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.64.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "drizzle-kit": "0.31.8",
     "eslint": "^9",
-    "eslint-config-next": "16.3.0",
+    "eslint-config-next": "16.3.8",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5"

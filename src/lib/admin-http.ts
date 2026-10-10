@@ -1,5 +1,6 @@
 import "server-only";
 import { isOwnerSignedIn } from "./admin-session";
+import { configuredAdminOrigin } from "./deployment-config";
 
 export class AdminHttpError extends Error {
   constructor(message: string, public status: number) { super(message); }
@@ -8,7 +9,10 @@ export class AdminHttpError extends Error {
 export function requireSameOrigin(request: Request) {
   const url = new URL(request.url);
   // Next.js can normalize the internal URL to localhost while the browser uses 127.0.0.1.
-  const expectedOrigin = process.env.ADMIN_ORIGIN ?? `${url.protocol}//${request.headers.get("host") ?? url.host}`;
+  let configured: string | undefined;
+  try { configured = configuredAdminOrigin(); }
+  catch { throw new AdminHttpError("Owner access is not configured.", 503); }
+  const expectedOrigin = configured ?? `${url.protocol}//${request.headers.get("host") ?? url.host}`;
   if (request.headers.get("origin") !== expectedOrigin) {
     throw new AdminHttpError("This request is not allowed.", 403);
   }

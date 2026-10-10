@@ -1,0 +1,540 @@
+{
+  "id": "4f7c0fed-fcc7-4951-b7a5-470354b6a5b5",
+  "prevId": "23a6e69d-6b06-477a-a74e-384f4d94075b",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.gift_crafts": {
+      "name": "gift_crafts",
+      "schema": "",
+      "columns": {
+        "gift_id": {
+          "name": "gift_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "craft": {
+          "name": "craft",
+          "type": "craft_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "comfort": {
+          "name": "comfort",
+          "type": "comfort_level",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "position": {
+          "name": "position",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "gift_crafts_position_idx": {
+          "name": "gift_crafts_position_idx",
+          "columns": [
+            {
+              "expression": "gift_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "position",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        }
+      },
+      "foreignKeys": {
+        "gift_crafts_gift_id_gift_ideas_id_fk": {
+          "name": "gift_crafts_gift_id_gift_ideas_id_fk",
+          "tableFrom": "gift_crafts",
+          "columnsFrom": [
+            "gift_id"
+          ],
+          "tableTo": "gift_ideas",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "gift_crafts_gift_id_craft_pk": {
+          "name": "gift_crafts_gift_id_craft_pk",
+          "columns": [
+            "gift_id",
+            "craft"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "gift_crafts_position_check": {
+          "name": "gift_crafts_position_check",
+          "value": "\"gift_crafts\".\"position\" >= 0"
+        }
+      },
+      "isRLSEnabled": true
+    },
+    "public.gift_ideas": {
+      "name": "gift_ideas",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "recipients": {
+          "name": "recipients",
+          "type": "recipient_type[]",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "occasions": {
+          "name": "occasions",
+          "type": "occasion[]",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "vibes": {
+          "name": "vibes",
+          "type": "gift_vibe[]",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "budget": {
+          "name": "budget",
+          "type": "budget_range",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "time": {
+          "name": "time",
+          "type": "time_range",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "avoidances": {
+          "name": "avoidances",
+          "type": "avoidance[]",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pattern_notes": {
+          "name": "pattern_notes",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image": {
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "best_for": {
+          "name": "best_for",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mess_level": {
+          "name": "mess_level",
+          "type": "mess_level",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "space_needed": {
+          "name": "space_needed",
+          "type": "space_needed",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "drying_time": {
+          "name": "drying_time",
+          "type": "drying_time",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ships_well": {
+          "name": "ships_well",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "kid_friendly": {
+          "name": "kid_friendly",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "published": {
+          "name": "published",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "display_order": {
+          "name": "display_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "gift_ideas_published_order_idx": {
+          "name": "gift_ideas_published_order_idx",
+          "columns": [
+            {
+              "expression": "published",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "display_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "with": {},
+          "method": "btree",
+          "concurrently": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "gift_ideas_display_order_check": {
+          "name": "gift_ideas_display_order_check",
+          "value": "\"gift_ideas\".\"display_order\" >= 0"
+        },
+        "gift_ideas_title_check": {
+          "name": "gift_ideas_title_check",
+          "value": "length(trim(\"gift_ideas\".\"title\")) > 0"
+        }
+      },
+      "isRLSEnabled": true
+    },
+    "public.gift_items": {
+      "name": "gift_items",
+      "schema": "",
+      "columns": {
+        "gift_id": {
+          "name": "gift_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "kind": {
+          "name": "kind",
+          "type": "gift_item_kind",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "position": {
+          "name": "position",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "gift_items_gift_id_gift_ideas_id_fk": {
+          "name": "gift_items_gift_id_gift_ideas_id_fk",
+          "tableFrom": "gift_items",
+          "columnsFrom": [
+            "gift_id"
+          ],
+          "tableTo": "gift_ideas",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "gift_items_gift_id_kind_position_pk": {
+          "name": "gift_items_gift_id_kind_position_pk",
+          "columns": [
+            "gift_id",
+            "kind",
+            "position"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "gift_items_position_check": {
+          "name": "gift_items_position_check",
+          "value": "\"gift_items\".\"position\" >= 0"
+        },
+        "gift_items_content_check": {
+          "name": "gift_items_content_check",
+          "value": "length(trim(\"gift_items\".\"content\")) > 0"
+        }
+      },
+      "isRLSEnabled": true
+    }
+  },
+  "enums": {
+    "public.avoidance": {
+      "name": "avoidance",
+      "schema": "public",
+      "values": [
+        "no-sewing",
+        "no-mess",
+        "no-food",
+        "no-drying",
+        "kid-friendly-only",
+        "no-expensive-tools",
+        "no-glitter",
+        "ships-well",
+        "kind-humor",
+        "no-crude-humor"
+      ]
+    },
+    "public.budget_range": {
+      "name": "budget_range",
+      "schema": "public",
+      "values": [
+        "under-10",
+        "10-25",
+        "25-50",
+        "50-plus",
+        "use-what-i-have"
+      ]
+    },
+    "public.comfort_level": {
+      "name": "comfort_level",
+      "schema": "public",
+      "values": [
+        "first-time",
+        "beginner",
+        "comfortable",
+        "advanced"
+      ]
+    },
+    "public.craft_type": {
+      "name": "craft_type",
+      "schema": "public",
+      "values": [
+        "open",
+        "crochet",
+        "knitting",
+        "sewing",
+        "paper",
+        "painting",
+        "drawing",
+        "candles",
+        "soap-bath",
+        "jewelry",
+        "cricut",
+        "wood",
+        "clay",
+        "floral",
+        "upcycled",
+        "food"
+      ]
+    },
+    "public.drying_time": {
+      "name": "drying_time",
+      "schema": "public",
+      "values": [
+        "none",
+        "short",
+        "overnight"
+      ]
+    },
+    "public.gift_item_kind": {
+      "name": "gift_item_kind",
+      "schema": "public",
+      "values": [
+        "material",
+        "tool",
+        "step",
+        "personalization",
+        "wrapping",
+        "supply",
+        "retailer"
+      ]
+    },
+    "public.mess_level": {
+      "name": "mess_level",
+      "schema": "public",
+      "values": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "public.occasion": {
+      "name": "occasion",
+      "schema": "public",
+      "values": [
+        "birthday",
+        "thank-you",
+        "holiday",
+        "housewarming",
+        "congratulations",
+        "get-well",
+        "funny-gag",
+        "just-because",
+        "christmas",
+        "valentines",
+        "mothers-day",
+        "fathers-day",
+        "anniversary",
+        "wedding",
+        "bridal-shower",
+        "baby-shower",
+        "teacher-appreciation",
+        "graduation",
+        "sympathy-comfort",
+        "new-job",
+        "retirement",
+        "hostess",
+        "apology",
+        "encouragement",
+        "other"
+      ]
+    },
+    "public.recipient_type": {
+      "name": "recipient_type",
+      "schema": "public",
+      "values": [
+        "partner",
+        "parent",
+        "friend",
+        "child",
+        "teacher",
+        "coworker",
+        "neighbor",
+        "host",
+        "hard-to-shop-for",
+        "other"
+      ]
+    },
+    "public.space_needed": {
+      "name": "space_needed",
+      "schema": "public",
+      "values": [
+        "tabletop",
+        "counter",
+        "small workspace"
+      ]
+    },
+    "public.time_range": {
+      "name": "time_range",
+      "schema": "public",
+      "values": [
+        "under-30",
+        "1-2-hours",
+        "one-evening",
+        "weekend",
+        "week-plus"
+      ]
+    },
+    "public.gift_vibe": {
+      "name": "gift_vibe",
+      "schema": "public",
+      "values": [
+        "sentimental",
+        "useful",
+        "cozy",
+        "playful",
+        "elegant",
+        "impressive",
+        "funny",
+        "low-effort",
+        "personal-private",
+        "fun-to-open"
+      ]
+    }
+  },
+  "schemas": {},
+  "views": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

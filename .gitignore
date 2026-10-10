@@ -13,6 +13,12 @@
 
 # testing
 /coverage
+/playwright-report/
+/test-results/
+/verification-output/
+/.preview-runtime.json
+/.next-preview/
+/.data-preview/
 
 # next.js
 /.next/

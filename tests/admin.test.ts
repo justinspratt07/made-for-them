@@ -31,12 +31,15 @@ test("session seals reject tampering and a different encryption key", async () =
 test("login attempts are limited and recover after the cooldown", () => {
   let now = 0;
   const limit = new OwnerLoginLimit(() => now);
-  for (let i = 0; i < 10; i++) assert.equal(limit.take(), true);
-  assert.equal(limit.take(), false);
+  for (let i = 0; i < 10; i++) assert.equal(limit.take("attacker"), true);
+  assert.equal(limit.take("attacker"), false);
+  assert.equal(limit.take("owner"), true);
+  limit.reset("owner");
+  assert.equal(limit.take("attacker"), false);
   now += 15 * 60 * 1000;
-  assert.equal(limit.take(), true);
-  limit.reset();
-  assert.equal(limit.take(), true);
+  assert.equal(limit.take("attacker"), true);
+  limit.reset("attacker");
+  assert.equal(limit.take("attacker"), true);
 });
 
 test("project validation rejects unsafe images, invalid categories, and incomplete publishing", () => {
