@@ -33,7 +33,6 @@ import {
   timeOptions,
   vibeOptions,
 } from "@/lib/gift-options";
-import { giftIdeas } from "@/lib/gift-ideas";
 import type {
   Avoidance,
   BudgetRange,
@@ -183,13 +182,69 @@ function suggestedRetailSearch(retailer: string, item: string) {
   return `https://www.google.com/search?q=${retailerName}+${query}`;
 }
 
-export function MadeForThemApp() {
+function formatList(title: string, items: string[]) {
+  return [`${title}:`, ...items.map((item) => `- ${item}`)].join("\n");
+}
+
+function formatShoppingList(gift: GiftIdea) {
+  const storeSearches = gift.supplyCategories.slice(0, 5).flatMap((item) => [
+    `${item}:`,
+    ...gift.retailers.slice(0, 3).map((retailer) => `- ${retailer}: ${suggestedRetailSearch(retailer, item)}`),
+  ]);
+
+  return [
+    `Made For Them shopping list`,
+    gift.title,
+    "",
+    formatList("Materials", gift.materials),
+    "",
+    formatList("Tools", gift.tools),
+    "",
+    "Store search links:",
+    ...storeSearches,
+  ].join("\n");
+}
+
+function formatGiftPlanSummary(gift: GiftIdea, url: string) {
+  return [
+    `${gift.title}`,
+    gift.description,
+    "",
+    `Best for: ${gift.bestFor}`,
+    `Time: ${getLabel(timeOptions, gift.time)}`,
+    `Budget: ${getLabel(budgetOptions, gift.budget)}`,
+    `Skill: ${comfortLabel(gift)}`,
+    "",
+    formatList("Materials", gift.materials),
+    "",
+    formatList("Tools", gift.tools),
+    "",
+    formatList("Steps", gift.steps.map((step, index) => `${index + 1}. ${step}`)),
+    "",
+    formatList("Personal touches", gift.personalization),
+    "",
+    formatList("Wrapping", gift.wrapping),
+    "",
+    `Made For Them: ${url}`,
+  ].join("\n");
+}
+
+async function writeToClipboard(text: string) {
+  if (!navigator.clipboard?.writeText) {
+    throw new Error("Clipboard is unavailable in this browser.");
+  }
+
+  await navigator.clipboard.writeText(text);
+}
+
+export function MadeForThemApp({ giftIdeas }: { giftIdeas: GiftIdea[] }) {
   const [quiz, setQuiz] = useState<QuizState>(initialQuiz);
   const [showResults, setShowResults] = useState(false);
   const [selectedGiftId, setSelectedGiftId] = useState<string | null>(null);
   const [mobileStep, setMobileStep] = useState(0);
   const [savedIds, setSavedIds] = useState<string[]>([]);
-  const matches = useMemo(() => getMatches(giftIdeas, quiz), [quiz]);
+  const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const matches = useMemo(() => getMatches(giftIdeas, quiz), [giftIdeas, quiz]);
   const selectedGift = useMemo(() => {
     const displayedMatches = [
       ...matches.best,
@@ -259,19 +314,42 @@ export function MadeForThemApp() {
   };
 
   const copyShoppingList = async (gift: GiftIdea) => {
-    const list = gift.materials.map((item) => `- ${item}`).join("\n");
-    await navigator.clipboard?.writeText(`${gift.title}\n\nMaterials\n${list}`);
+    try {
+      await writeToClipboard(formatShoppingList(gift));
+      setActionMessage("Shopping list copied with materials, tools, and store links.");
+    } catch {
+      setActionMessage("Copy was blocked by this browser. Try Print Plan instead.");
+    }
   };
 
   const shareGift = async (gift: GiftIdea) => {
-    const shareText = `${gift.title}: ${gift.description}`;
-    if (navigator.share) {
-      await navigator.share({ title: gift.title, text: shareText, url: window.location.href });
-      return;
-    }
+    const shareText = formatGiftPlanSummary(gift, window.location.href);
 
-    await navigator.clipboard?.writeText(`${shareText}\n${window.location.href}`);
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: gift.title, text: shareText, url: window.location.href });
+        setActionMessage("Share sheet opened for this gift plan.");
+        return;
+      }
+
+      await writeToClipboard(shareText);
+      setActionMessage("Gift plan copied so you can paste it into a message.");
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        setActionMessage("Share canceled.");
+        return;
+      }
+
+      setActionMessage("Share was blocked by this browser. Try Copy Shopping List or Print Plan.");
+    }
   };
+
+  if (giftIdeas.length === 0) return (
+    <main className="min-h-screen"><Header savedCount={savedIds.length} />
+      <section className="mx-auto max-w-2xl px-6 py-16"><h1 className="font-serif text-2xl font-semibold">New gift ideas are on their way.</h1>
+        <p className="mt-4 text-[var(--muted)]">Please check back soon.</p></section>
+    </main>
+  );
 
   return (
     <main className="min-h-screen overflow-hidden">
@@ -475,6 +553,7 @@ export function MadeForThemApp() {
           onPrint={() => window.print()}
           onCopy={() => copyShoppingList(selectedGift)}
           onShare={() => shareGift(selectedGift)}
+          actionMessage={actionMessage}
         />
       ) : null}
     </main>
@@ -1068,11 +1147,13 @@ function GiftDetail({
   onPrint,
   onCopy,
   onShare,
+  actionMessage,
 }: {
   gift: ScoredGift;
   onPrint: () => void;
   onCopy: () => void;
   onShare: () => void;
+  actionMessage: string | null;
 }) {
   return (
     <section id="plan" className="px-4 py-14 sm:px-6 lg:px-10">
@@ -1200,7 +1281,7 @@ function GiftDetail({
           </PlanSection>
         </article>
 
-        <aside className="no-print lg:sticky lg:top-6 lg:self-start">
+        <aside className="printable-shopping-list lg:sticky lg:top-6 lg:self-start">
           <div className="border border-[var(--border)] bg-[rgba(255,253,248,0.92)] p-5 shadow-[var(--shadow)]">
             <h3 className="font-serif text-3xl font-semibold">Shopping List</h3>
             <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
@@ -1226,7 +1307,7 @@ function GiftDetail({
                 </div>
               ))}
             </div>
-            <div className="mt-5 grid gap-3">
+            <div className="no-print mt-5 grid gap-3">
               <button type="button" onClick={onPrint} className="action-button">
                 <Printer className="h-4 w-4" />
                 Print Plan
@@ -1239,6 +1320,11 @@ function GiftDetail({
                 <Share2 className="h-4 w-4" />
                 Share
               </button>
+              {actionMessage ? (
+                <p className="border border-[rgba(101,122,91,0.3)] bg-[rgba(101,122,91,0.08)] px-3 py-2 text-sm leading-6 text-[var(--muted)]" role="status" aria-live="polite">
+                  {actionMessage}
+                </p>
+              ) : null}
             </div>
           </div>
         </aside>

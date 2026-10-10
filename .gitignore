@@ -16,6 +16,7 @@
 
 # next.js
 /.next/
+/.next-*/
 /out/
 /dist/
 
@@ -25,6 +26,11 @@
 # misc
 # Local hosting configuration
 /.openai/
+/AGENTS.md
+/CLAUDE.md
+/.codex/
+/.claude/
+/.agents/
 .DS_Store
 *.pem
 
@@ -36,6 +42,9 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+/.data/
+/.admin-login.local.txt
 
 # vercel
 .vercel

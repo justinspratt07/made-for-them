@@ -15,12 +15,16 @@ Implemented:
 - Matching logic for result ranking.
 - Results sections and gift detail plan.
 - Gift tag favicon/app mark.
-- Local generated craft visual asset.
+- Project-specific visual assets.
+- Supabase PostgreSQL storage, Drizzle migrations, and PGlite development support.
+- Private owner editor with drafts, publishing checks, and stale-edit protection.
+- Detailed crochet patterns and printable/copyable gift plans.
 
 Verified:
 
 - `pnpm lint`
 - `pnpm build`
+- `pnpm test:db` (24 tests).
 - Desktop and mobile workflow smoke test.
 
 ## Product Decisions
@@ -56,7 +60,7 @@ Tasks:
 - [x] Build results and gift detail views.
 - [x] Add local visual asset.
 - [x] Verify lint/build.
-- [ ] Add individual craft-category images.
+- [x] Add individual project images.
 - [ ] Add stronger empty state for strict filters.
 - [ ] Add local saved ideas persistence.
 
@@ -98,8 +102,8 @@ Tasks:
 
 - [ ] Add saved ideas using `localStorage`.
 - [ ] Add filter pivots that actually re-rank results.
-- [ ] Add generated printable gift plan layout.
-- [ ] Add toast feedback for save/copy/share actions.
+- [x] Add printable gift plan layout.
+- [x] Add feedback for copy/share actions.
 - [ ] Add "loosen filters" suggestions when results are weak.
 - [ ] Add better mobile accordions on gift detail.
 - [ ] Add accessibility pass for focus states and labels.
@@ -118,13 +122,20 @@ Goal: Prepare for growth without overbuilding too early.
 
 Tasks:
 
-- [ ] Move gift data from static TypeScript to PostgreSQL.
-- [ ] Choose Supabase or Neon for managed Postgres.
-- [ ] Add Prisma or Drizzle.
+- [x] Add local PostgreSQL storage, migrations, gift import, and server-side library loading.
+- [x] Connect and verify hosted PostgreSQL through Supabase (local app).
+
+Local implementation and Supabase setup walkthrough: [Database Setup](database-setup.md).
+
+Remaining tasks:
+- [x] Choose Supabase for managed PostgreSQL.
+- [x] Add Drizzle.
 - [ ] Add affiliate link tracking model.
 - [ ] Add analytics events.
 - [ ] Add email capture for saved plans.
-- [ ] Add admin-friendly gift idea editing workflow.
+- [x] Add a single-owner gift editor with drafts, publication checks, and protected saves.
+
+Editor implementation and owner setup: [Admin Editor](admin-editor.md).
 
 Acceptance criteria:
 
@@ -133,25 +144,25 @@ Acceptance criteria:
 - Quiz completion and result click behavior can be measured.
 - Email capture is optional and does not block the quiz.
 
-### Phase 5: AI And Personalization
+### Phase 5: Personalization
 
-Goal: Use AI as an assistant layer, not the whole product.
+Goal: Expand personalization using curated project data and clear matching rules.
 
 Tasks:
 
-- [ ] Add AI-generated "why this fits" copy.
-- [ ] Add AI gift plan refinements.
+- [x] Explain why projects fit and identify tradeoffs.
+- [ ] Add gift plan refinements for faster and lower-cost variants.
 - [ ] Add "use supplies I have" personalization.
-- [ ] Add AI-assisted gift idea expansion for admins.
-- [ ] Add moderation and quality checks for generated content.
-- [ ] Add cost controls and caching.
+- [ ] Expand the curated gift library through the owner editor.
+- [ ] Add content review checks before publication.
+- [ ] Add saved preferences when user accounts are introduced.
 
 Acceptance criteria:
 
-- AI improves clarity and personalization.
-- Curated database remains the source of truth.
-- Generated content is bounded, useful, and safe.
-- AI costs are measurable.
+- Matching explanations help users choose a realistic project.
+- The curated database remains the source of truth.
+- Project variants have concrete instructions and material lists.
+- Content can be reviewed before they appear in recommendations.
 
 ### Phase 6: Launch
 
@@ -370,7 +381,6 @@ flowchart LR
   Browser["User Browser"]
   Vercel["Vercel / Next.js App"]
   DB["Managed PostgreSQL"]
-  AI["OpenAI API"]
   Email["Resend"]
   Stripe["Stripe"]
   Analytics["PostHog or Plausible"]
@@ -378,7 +388,6 @@ flowchart LR
 
   Browser <--> Vercel
   Vercel <--> DB
-  Vercel <--> AI
   Vercel <--> Email
   Vercel <--> Stripe
   Vercel --> Analytics
@@ -494,7 +503,7 @@ flowchart LR
 | Short supporting copy                                       |
 |                                                            |
 | +--------------------------------------------------------+ |
-| | Generator form, 2-column where room allows             | |
+| | Each question uses the full form width                | |
 | | Craft chips wrap naturally                             | |
 | | Comfort cards stack under selected crafts              | |
 | +--------------------------------------------------------+ |
@@ -517,40 +526,39 @@ flowchart LR
 | Printable Plan | Printer-friendly output | Basic print support |
 | Saved Ideas | Review saved gifts | Header count only |
 | Idea Library | Browse all gifts | Not implemented |
-| Admin Gift Editor | Manage gift content | Not implemented |
+| Admin Gift Editor | Manage gift content | Implemented; owner sign-in required |
 
 ## Engineering Map
 
 | Concern | Current file | Future direction |
 | --- | --- | --- |
 | Main UI | `src/components/made-for-them-app.tsx` | Split into smaller components |
-| Gift data | `src/lib/gift-ideas.ts` | Move to database |
+| Gift data | `src/db/schema.ts`, `src/db/gift-repository.ts` | Hosted PostgreSQL; TypeScript library retained for seeding/static previews |
 | Quiz options | `src/lib/gift-options.ts` | Keep shared enum/options layer |
 | Matching logic | `src/lib/matching.ts` | Add weighting config and tests |
 | Types | `src/lib/gift-types.ts` | Share with API/database schemas |
 | Brand styles | `src/app/globals.css` | Add design tokens/components |
-| Static assets | `public/assets/` | Add per-category generated assets |
+| Static assets | `public/assets/` | Add photos for new projects |
 
 ## Next Implementation Sprint
 
-Recommended next sprint: craft-category image system.
+Recommended next sprint: public server deployment and release automation.
 
 Tasks:
 
-1. Generate or source one image per craft category.
-2. Save images under `public/assets/crafts/`.
-3. Update `craftPhotos` in `src/lib/gift-ideas.ts`.
-4. Verify that result cards feel varied.
-5. Run `pnpm lint` and `pnpm build`.
-6. Do desktop/mobile visual QA.
+1. Select a host that supports the Next.js server runtime.
+2. Configure private environment settings and database roles.
+3. Replace the process-local owner login limit with a shared limit.
+4. Add automated release checks and database backups.
+5. Run lint, database tests, and both server/static builds.
+6. Verify public recommendations and protected owner routes on desktop/mobile.
 
 Acceptance criteria:
 
-- Paper craft results look like paper crafts.
-- Crochet results look like crochet.
-- Food gift results look like food gifts.
-- Candle/bath/jewelry/fabric/Cricut/wood/upcycled categories are visually distinct.
-- Images retain the Made For Them palette and premium stationery mood.
+- The public app reads the hosted gift library.
+- The owner editor is available only after sign-in.
+- Static previews stay available without database credentials.
+- A repeatable deployment process and rollback instructions are documented.
 
 ## Release Checklist
 

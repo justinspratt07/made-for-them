@@ -1,5 +1,31 @@
 @import "tailwindcss";
 
+@layer components {
+.admin-page {
+  --surface: #ffffff;
+  --border: #dedede;
+  --ink: #252525;
+  --muted: #656565;
+  background: #fafafa;
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+}
+.admin-field { display: grid; min-width: 0; gap: 8px; font-size: 14px; font-weight: 600; }
+.admin-input { width: 100%; min-width: 0; border: 1px solid var(--border); border-radius: 4px; background: white; padding: 10px 12px; font-size: 14px; font-weight: 400; line-height: 1.5; color: var(--ink); }
+textarea.admin-input { resize: vertical; }
+.admin-input:focus { outline: 2px solid var(--cranberry); outline-offset: 2px; }
+.admin-input[aria-invalid="true"] { border-color: var(--cranberry); }
+.admin-primary, .admin-secondary, .admin-icon { display: inline-flex; min-height: 40px; flex-shrink: 0; align-items: center; justify-content: center; gap: 8px; border-radius: 4px; padding: 8px 12px; font-size: 14px; font-weight: 600; }
+.admin-primary { border: 1px solid var(--cranberry); background: var(--cranberry); color: white; }
+.admin-secondary, .admin-icon { border: 1px solid var(--border); background: white; color: var(--ink); }
+.admin-icon { width: 40px; padding: 8px; }
+.admin-page button:disabled { opacity: 0.5; cursor: default; }
+.admin-page button:focus-visible, .admin-page a:focus-visible { outline: 2px solid var(--cranberry); outline-offset: 3px; }
+.admin-check { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; font-weight: 400; line-height: 1.4; }
+.admin-check input { flex-shrink: 0; margin-top: 2px; accent-color: var(--cranberry); }
+}
+.admin-page input, .admin-page textarea, .admin-page select { font-weight: 400; }
+
 :root {
   --paper: #f6eddb;
   --surface: #fffdf8;
@@ -279,16 +305,62 @@ button:disabled {
 }
 
 @media print {
+  @page {
+    margin: 0.55in;
+  }
+
   body {
     background: #fff;
+    color: #231f1a;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  #plan,
+  #plan * {
+    visibility: visible !important;
+  }
+
+  #plan {
+    left: 0;
+    padding: 0 !important;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+
+  #plan > div {
+    display: block !important;
+    max-width: none !important;
   }
 
   .no-print {
     display: none !important;
+    visibility: hidden !important;
+  }
+
+  .printable-plan,
+  .printable-shopping-list > div {
+    background: #fff !important;
+    box-shadow: none !important;
+    border-color: #c8b9a5 !important;
   }
 
   .printable-plan {
-    box-shadow: none !important;
-    border-color: #c8b9a5 !important;
+    border: 0 !important;
+    padding: 0 !important;
+  }
+
+  .printable-shopping-list {
+    break-inside: avoid;
+    margin-top: 0.35in;
+    page-break-inside: avoid;
+  }
+
+  .printable-shopping-list a {
+    color: #231f1a !important;
+    text-decoration: none;
   }
 }

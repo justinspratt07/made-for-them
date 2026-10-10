@@ -4,25 +4,42 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node scripts/prepare-sites-build.mjs",
+    "build": "next build",
+    "build:static": "node scripts/build-static.mjs",
     "build:github-pages": "node scripts/build-github-pages.mjs",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:generate": "drizzle-kit generate",
+    "db:setup": "tsx scripts/database.ts setup",
+    "db:migrate": "tsx scripts/database.ts migrate",
+    "db:seed": "tsx scripts/database.ts seed",
+    "db:check": "tsx scripts/database.ts check",
+    "test:db": "tsx --test tests/database.test.ts tests/admin.test.ts",
+    "admin:setup": "tsx scripts/admin-setup.ts"
   },
   "dependencies": {
+    "@electric-sql/pglite": "^0.5.8",
+    "@next/env": "16.3.0",
+    "drizzle-orm": "0.45.2",
+    "iron-session": "^8.0.4",
     "lucide-react": "^1.30.0",
     "next": "16.3.0",
+    "postgres": "3.4.8",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "server-only": "^0.0.1",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "drizzle-kit": "0.31.8",
     "eslint": "^9",
     "eslint-config-next": "16.3.0",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   },
   "packageManager": "pnpm@11.16.0"
