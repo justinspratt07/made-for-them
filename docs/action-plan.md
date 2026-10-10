@@ -162,7 +162,7 @@ Acceptance criteria:
 - Matching explanations help users choose a realistic project.
 - The curated database remains the source of truth.
 - Project variants have concrete instructions and material lists.
-- Content can be reviewed before they appear in recommendations.
+- Projects can be reviewed before they appear in recommendations.
 
 ### Phase 6: Launch
 

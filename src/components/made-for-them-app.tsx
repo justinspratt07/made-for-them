@@ -353,7 +353,10 @@ export function MadeForThemApp({ giftIdeas }: { giftIdeas: GiftIdea[] }) {
 
   return (
     <main className="min-h-screen overflow-hidden">
-      <Header savedCount={savedIds.length} />
+      <Header savedCount={savedIds.length} onBrowse={() => {
+        setShowResults(true);
+        requestAnimationFrame(() => document.getElementById("results")?.scrollIntoView());
+      }} />
       <section className="relative mx-auto grid w-full max-w-[1440px] gap-10 px-4 pb-16 pt-8 sm:px-6 lg:grid-cols-[minmax(0,1.03fr)_minmax(360px,0.8fr)] lg:px-10 lg:pb-24 lg:pt-12">
         <div className="absolute left-[-100px] top-[46%] hidden h-1 w-[280px] rotate-[-12deg] bg-[var(--cranberry)] opacity-85 lg:block" />
         <div className="min-w-0">
@@ -560,9 +563,9 @@ export function MadeForThemApp({ giftIdeas }: { giftIdeas: GiftIdea[] }) {
   );
 }
 
-function Header({ savedCount }: { savedCount: number }) {
+function Header({ savedCount, onBrowse }: { savedCount: number; onBrowse?: () => void }) {
   return (
-    <header className="no-print border-b border-[var(--border)] bg-[rgba(248,243,234,0.88)] px-4 py-4 backdrop-blur sm:px-6 lg:px-10">
+    <header className="no-print relative z-50 border-b border-[var(--border)] bg-[rgba(248,243,234,0.88)] px-4 py-4 backdrop-blur sm:px-6 lg:px-10">
       <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4">
         <a href="#" className="flex min-w-0 items-center gap-3">
           <GiftTagMark />
@@ -572,20 +575,22 @@ function Header({ savedCount }: { savedCount: number }) {
           <a className="nav-link" href="#generator">
             Gift Generator
           </a>
-          <a className="nav-link" href="#results">
+          <a className="nav-link" href="#results" onClick={onBrowse}>
             Idea Library
           </a>
-          <a className="nav-link" href="#plan">
-            Gift Plan
-          </a>
         </nav>
-        <button className="hidden items-center gap-2 text-sm font-semibold md:flex" type="button">
+        <span className="hidden items-center gap-2 text-sm font-semibold md:flex">
           <Bookmark className="h-4 w-4" />
-          Saved Ideas {savedCount > 0 ? `(${savedCount})` : ""}
-        </button>
-        <button className="grid h-11 w-11 place-items-center border border-[var(--border)] bg-[var(--surface)] md:hidden" type="button" aria-label="Open menu">
-          <Menu className="h-5 w-5" />
-        </button>
+          Saved this session ({savedCount})
+        </span>
+        <details className="relative md:hidden">
+          <summary className="grid h-11 w-11 cursor-pointer place-items-center" aria-label="Open menu"><Menu className="h-5 w-5" /></summary>
+          <nav className="absolute right-0 z-50 grid w-48 gap-4 border bg-white p-4 shadow-lg">
+            <a href="#generator">Gift Generator</a>
+            <a href="#results" onClick={onBrowse}>Idea Library</a>
+            <span>Saved this session ({savedCount})</span>
+          </nav>
+        </details>
       </div>
     </header>
   );
@@ -1285,7 +1290,7 @@ function GiftDetail({
           <div className="border border-[var(--border)] bg-[rgba(255,253,248,0.92)] p-5 shadow-[var(--shadow)]">
             <h3 className="font-serif text-3xl font-semibold">Shopping List</h3>
             <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-              Early MVP links use store searches. Later, these become tracked affiliate links.
+              Browse retailer search results for the supplies below. Prices and availability vary.
             </p>
             <div className="mt-5 grid gap-3">
               {gift.supplyCategories.slice(0, 5).map((item) => (
