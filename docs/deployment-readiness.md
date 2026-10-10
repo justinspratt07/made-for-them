@@ -117,7 +117,9 @@ ingress identities against an isolated production-mode server.
 - A selected host and verified ingress identity/header contract.
 - Private runtime secret configuration and rotation procedure.
 - Scheduled encrypted backups with agreed retention, and a recovery rehearsal
-  into a separate database. Supabase connection success is not backup evidence.
+  into a separate hosted database. A disposable CI pg_dump/pg_restore rehearsal
+  verifies fixture content, versions, draft privacy, and restored permissions;
+  it does not verify provider scheduling, retention, or live recovery.
 - Staging smoke tests with the actual hosting network and TLS termination.
 - Keyboard/zoom checks and public deployment approval.
 
