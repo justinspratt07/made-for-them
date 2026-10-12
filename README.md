@@ -5,10 +5,11 @@ recipient, occasion, craft interests, skill level, budget, and available time.
 The app ranks a curated library using deterministic matching rules and turns
 each recommendation into a practical project plan.
 
-[Try the static preview](https://justinspratt07.github.io/made-for-them/)
+[Try the live preview](https://made-for-them-preview.onrender.com/) · [Static preview](https://justinspratt07.github.io/made-for-them/)
 
-The public preview uses the starter library. The database-backed app and private
-editor require a Next.js server and are not available on GitHub Pages.
+The Render testing preview runs the database-backed Next.js app. Owner editing
+requires sign-in. The separate GitHub Pages preview uses the starter library and
+omits the editor and server endpoints.
 
 ## Implemented Features
 
@@ -87,12 +88,13 @@ Photos use existing assets or hosted HTTPS URLs; direct uploads are not implemen
 The editor supports one owner, not a multi-user account system. Hosted login limits
 are client-scoped and shared through PostgreSQL; local development uses a bounded
 in-memory limit. Hosted modes require separate public/editor database roles and
-trusted ingress settings. These changes still require staging and live configuration
-before public deployment. Cross-device saved ideas, analytics, payments, and
+trusted ingress settings. A database-backed testing preview is available on Render;
+it is not a production release. Cross-device saved ideas, analytics, payments, and
 affiliate tracking remain future work.
 See [server readiness](docs/deployment-readiness.md) for deployment controls and gates.
 The [Render setup guide](docs/render-setup.md) covers a free testing service and
-private settings. `render.yaml` is configuration only; no Render deployment is live.
+private settings. `render.yaml` describes the testing service; creating or changing
+hosting resources requires a separate deployment action.
 See the [action plan](docs/action-plan.md) for the roadmap and diagrams.
 
 Author: [Justin Spratt](https://github.com/justinspratt07)
