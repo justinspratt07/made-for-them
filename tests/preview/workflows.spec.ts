@@ -57,8 +57,8 @@ test("origin, JSON, owner authorization, drafts, publication, and stale edits re
 
 test("one hosted client's failures cannot prevent a different client signing in", async ({ playwright }) => {
   test.skip(fixture.env.GIFT_DATA_SOURCE !== "postgres", "Separate ingress identities require hosted PostgreSQL fixture.");
-  const attacker = await playwright.request.newContext({ baseURL: origin, extraHTTPHeaders: { Origin: origin, "x-real-ip": "192.0.2.100" } });
-  const owner = await playwright.request.newContext({ baseURL: origin, extraHTTPHeaders: { Origin: origin, "x-real-ip": "192.0.2.101" } });
+  const attacker = await playwright.request.newContext({ baseURL: origin, extraHTTPHeaders: { Origin: origin, [fixture.env.ADMIN_CLIENT_IP_HEADER]: "192.0.2.100" } });
+  const owner = await playwright.request.newContext({ baseURL: origin, extraHTTPHeaders: { Origin: origin, [fixture.env.ADMIN_CLIENT_IP_HEADER]: "192.0.2.101" } });
   try {
     for (let i = 0; i < 10; i++) expect((await attacker.post("/api/admin/login", { data: { password: "wrong" } })).status()).toBe(401);
     expect((await attacker.post("/api/admin/login", { data: { password: fixture.password } })).status()).toBe(429);

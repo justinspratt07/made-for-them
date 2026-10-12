@@ -48,16 +48,18 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm test:db
+      - name: Validate free Render configuration
+        run: pnpm render:validate
       - name: Dependency vulnerability gate
         run: pnpm audit --prod --audit-level=high
       - name: Isolated PostgreSQL preview setup
-        run: pnpm preview:setup
+        run: pnpm preview:setup --render
       - name: Verify runtime roles and deployment settings
         run: pnpm deployment:check -- --preview
       - name: Verify independent PostgreSQL pools
         run: pnpm test:postgres
       - name: Build server for preview
-        run: pnpm build:server --preview
+        run: pnpm build:render --preview
       - name: Install browser
         run: pnpm exec playwright install --with-deps chromium
       - name: Verify preview and accessibility

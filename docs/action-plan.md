@@ -546,7 +546,7 @@ Recommended next sprint: public server deployment and release automation.
 
 Tasks:
 
-1. Select a host that supports the Next.js server runtime.
+1. Configure Render Free for testing, with a paid compute upgrade before launch.
 2. Configure private environment settings and database roles.
 3. Verify the client-scoped shared login limit behind the selected host's ingress.
 4. Run the automated release checks and configure/test database backups.
@@ -567,6 +567,7 @@ Implementation progress:
 - [x] Add strict hosted origin/connection checks and runtime permission probes.
 - [x] Add isolated preview setup and browser/API/accessibility test commands.
 - [x] Add release verification and CodeQL workflow definitions.
+- [x] Select Render Free for testing; prepare its build/start scripts and setup guide.
 - [ ] Confirm successful CI runs for the release commit.
 - [ ] Verify the selected host's trusted ingress behavior and configure runtime roles.
 - [ ] Configure backups and complete a separate-database recovery rehearsal.

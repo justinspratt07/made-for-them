@@ -72,4 +72,7 @@ export function assertOwnerDeployment(env: Environment = process.env) {
   if (!["x-real-ip", "cf-connecting-ip", "x-vercel-forwarded-for"].includes(env.ADMIN_CLIENT_IP_HEADER ?? "")) {
     throw new Error("Configure a trusted, ingress-overwritten client IP header.");
   }
+  if (env.RENDER === "true" && env.ADMIN_CLIENT_IP_HEADER !== "cf-connecting-ip") {
+    throw new Error("Render requires the ingress-overwritten CF-Connecting-IP header.");
+  }
 }

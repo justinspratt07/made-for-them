@@ -91,6 +91,8 @@ trusted ingress settings. These changes still require staging and live configura
 before public deployment. Cross-device saved ideas, analytics, payments, and
 affiliate tracking remain future work.
 See [server readiness](docs/deployment-readiness.md) for deployment controls and gates.
+The [Render setup guide](docs/render-setup.md) covers a free testing service and
+private settings. `render.yaml` is configuration only; no Render deployment is live.
 See the [action plan](docs/action-plan.md) for the roadmap and diagrams.
 
 Author: [Justin Spratt](https://github.com/justinspratt07)

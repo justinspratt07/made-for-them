@@ -4,6 +4,10 @@ The GitHub Pages preview remains a static, starter-data site. It cannot run the
 owner editor or read Supabase. A public database-backed deployment needs a
 Next.js server, an HTTPS origin, trusted ingress, and separate database users.
 
+Render Free is selected for testing, with a paid compute upgrade before launch.
+Follow [Render Setup](render-setup.md). The configuration itself does not create
+a service or apply live migrations.
+
 ## Implemented Controls
 
 - Public and editor connection pools are separate in hosted modes.

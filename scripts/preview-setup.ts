@@ -10,6 +10,8 @@ async function main() {
   // This command never loads .env.local or uses the real project connection.
   const migrationUrl = process.env.PREVIEW_MIGRATION_DATABASE_URL;
   const source = migrationUrl ? "postgres" : "pglite";
+  const render = process.argv.includes("--render");
+  if (render && source !== "postgres") throw new Error("Render fixtures require the isolated PostgreSQL CI setup.");
   const localPath = `.data-preview/library-${randomBytes(8).toString("hex")}`;
   let endpoint: URL | undefined;
   if (migrationUrl) {
@@ -48,6 +50,8 @@ async function main() {
       ADMIN_ORIGIN: "http://127.0.0.1:3100", ADMIN_CLIENT_IP_HEADER: "x-real-ip",
       STATIC_EXPORT: "false", GITHUB_PAGES: "false", NEXT_PUBLIC_BASE_PATH: "",
       ISOLATED_PREVIEW: "true",
+      ...(render ? { RENDER: "true", RENDER_EXTERNAL_URL: "https://render-fixture.onrender.com",
+        ADMIN_CLIENT_IP_HEADER: "cf-connecting-ip", PORT: "3100" } : {}),
     };
     await writeFile(".preview-runtime.json", JSON.stringify({ env, password }), { mode: 0o600 });
     console.log(`Prepared isolated ${source} preview with ${giftIdeas.length} gifts; no live database was used.`);
