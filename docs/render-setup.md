@@ -19,13 +19,16 @@ branch does not have the Render startup scripts yet.
 Before creating the public service:
 
 - [ ] Review the PR and its exact-commit verification results.
-- [ ] Back up Supabase and approve migration `0002_deployment_controls`.
-- [ ] Apply the reviewed migration using separate maintenance credentials.
-- [ ] Provision separate reader/editor login roles with strong passwords.
-- [ ] Verify those roles and the intended HTTPS origin using `pnpm deployment:check`.
+- [x] Back up the application schemas and verify a local restore before migration.
+- [x] Apply migration `0002_deployment_controls` using the private maintenance connection.
+- [x] Provision separate reader/editor login roles with strong passwords.
+- [x] Verify both actual Supabase roles and preserve all 33 gift records.
+- [ ] Verify the final Render HTTPS origin and settings with `pnpm deployment:check`.
 - [ ] Prepare an owner password hash without exposing the password in chat or Git.
 - [ ] Complete manual keyboard/zoom checks.
 - [ ] Approve publishing the database-backed testing service.
+
+Verified database preparation and backup scope: [Database Access Preparation](database-access-preparation.md).
 
 See [Server Readiness](deployment-readiness.md) for roles, backups, and rollback
 requirements. Creating a workspace is not approval to migrate or publish.
