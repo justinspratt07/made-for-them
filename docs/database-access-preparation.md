@@ -8,35 +8,30 @@ The hosted app uses two login accounts:
 Neither account is a database administrator. The maintenance connection remains
 private and must not be added to Render.
 
-## Verified Preparation
+## Preparation Workflow
 
-On October 12, 2026, the dedicated Supabase application database was checked
-read-only: PostgreSQL 17.11, 33 published gifts, and only the three gift tables in
-the public schema. Before changing permissions, an application backup of the
-`public` and `drizzle` schemas was taken using matching PostgreSQL tools.
+Actual database operation records, connection values, backups, and verification
+receipts belong in the owner's private preparation directory, not on GitHub.
 
-That backup was restored into a temporary localhost-only database. All application
-rows, timestamps, and ordered content matched the live source fingerprint. The
-permission migration and new login accounts were tested against that restored
-copy before applying them to Supabase. The live reader/editor accounts then
-passed the runtime permission probes and read checks; all 33 gift records remained
-unchanged. Three migrations are now applied. The temporary database was stopped
-and its plaintext scratch files removed.
+The helper first checks the intended application's schema, then creates an
+application backup with compatible PostgreSQL tools. It restores that backup
+into a temporary localhost-only database and compares all application rows,
+timestamps, and ordered content. Permissions and login accounts are tested
+against the restored copy before any explicitly approved live operation.
 
-The backup is protected with Windows CurrentUser DPAPI and stored outside the
-repository. Its protection round-trip was checked. Recovery requires the same
-Windows account's protection keys; this is not a portable, independently keyed
-off-site backup. Keep account/machine recovery available and arrange a portable
-off-site backup before relying on a public production service.
+The Windows helper protects its backup with CurrentUser DPAPI. Recovery requires
+the same Windows account's protection keys; this is not a portable, independently
+keyed off-site backup. Keep account/machine recovery available and arrange a
+portable off-site backup before relying on a public production service.
 
 Scope limitations:
 
 - This is an application-schema backup, not a full Supabase Auth/Storage backup.
 - Original ownership/ACL restoration was not tested; the local rehearsal skipped
   those platform-specific settings. The archive preserves them for manual review.
-- New runtime permissions were independently verified against both the restored
-  copy and the actual Supabase accounts.
-- No Render service was created and no GitHub PR was merged by this operation.
+- New runtime permissions require separate checks against the restored copy and
+  the actual database accounts.
+- This helper does not create a Render service or merge a GitHub PR.
 - Scheduled backups, actual hosting ingress, and manual accessibility checks
   remain separate release gates.
 
