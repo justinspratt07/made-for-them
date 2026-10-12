@@ -14,6 +14,6 @@ export const metadata: Metadata = {
 export default async function AdminPage() {
   await connection();
   if (!await isOwnerSignedIn()) return <AdminSignIn configured={adminIsConfigured()} />;
-  const records = await readGiftRecords(await getGiftDatabase(), true);
+  const records = await readGiftRecords(await getGiftDatabase("editor"), true);
   return <AdminGiftEditor initialRecords={records} />;
 }

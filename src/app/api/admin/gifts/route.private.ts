@@ -7,7 +7,7 @@ import { adminErrorResponse, adminJson, readAdminJson, requireOwner, requireSame
 export async function GET() {
   try {
     await requireOwner();
-    return adminJson({ records: await readGiftRecords(await getGiftDatabase(), true) });
+    return adminJson({ records: await readGiftRecords(await getGiftDatabase("editor"), true) });
   } catch (error) { return adminErrorResponse(error); }
 }
 
@@ -16,7 +16,7 @@ export async function PUT(request: Request) {
     requireSameOrigin(request);
     await requireOwner();
     const input = await readAdminJson(request);
-    const record = await saveGiftRecord(await getGiftDatabase(), input);
+    const record = await saveGiftRecord(await getGiftDatabase("editor"), input);
     revalidatePath("/");
     revalidatePath("/admin");
     return adminJson({ record });

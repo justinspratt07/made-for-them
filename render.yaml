@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: made-for-them-preview
+    runtime: node
+    plan: free
+    region: virginia
+    branch: main
+    autoDeployTrigger: off
+    buildCommand: pnpm build:render
+    startCommand: pnpm start:render
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 24.21.0
+      - key: NODE_ENV
+        value: production
+      - key: GIFT_DATA_SOURCE
+        value: postgres
+      - key: APP_DEPLOYMENT
+        value: preview
+      - key: ADMIN_CLIENT_IP_HEADER
+        value: cf-connecting-ip
+      - key: STATIC_EXPORT
+        value: "false"
+      - key: GITHUB_PAGES
+        value: "false"
+      - key: ISOLATED_PREVIEW
+        value: "false"
+      - key: DATABASE_URL
+        sync: false
+      - key: ADMIN_DATABASE_URL
+        sync: false
+      - key: ADMIN_PASSWORD_HASH
+        sync: false
+      - key: ADMIN_SESSION_SECRET
+        generateValue: true

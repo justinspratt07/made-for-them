@@ -546,10 +546,10 @@ Recommended next sprint: public server deployment and release automation.
 
 Tasks:
 
-1. Select a host that supports the Next.js server runtime.
+1. Configure Render Free for testing, with a paid compute upgrade before launch.
 2. Configure private environment settings and database roles.
-3. Replace the process-local owner login limit with a shared limit.
-4. Add automated release checks and database backups.
+3. Verify the client-scoped shared login limit behind the selected host's ingress.
+4. Run the automated release checks and configure/test database backups.
 5. Run lint, database tests, and both server/static builds.
 6. Verify public recommendations and protected owner routes on desktop/mobile.
 
@@ -559,6 +559,22 @@ Acceptance criteria:
 - The owner editor is available only after sign-in.
 - Static previews stay available without database credentials.
 - A repeatable deployment process and rollback instructions are documented.
+
+Implementation progress:
+
+- [x] Add client-scoped PostgreSQL login counters and regression tests.
+- [x] Prepare separate reader/editor role grants and published-only RLS policies.
+- [x] Add strict hosted origin/connection checks and runtime permission probes.
+- [x] Add isolated preview setup and browser/API/accessibility test commands.
+- [x] Add release verification and CodeQL workflow definitions.
+- [x] Select Render Free for testing; prepare its build/start scripts and setup guide.
+- [ ] Confirm successful CI runs for the release commit.
+- [ ] Verify the selected host's trusted ingress behavior and configure runtime roles.
+- [ ] Configure backups and complete a separate-database recovery rehearsal.
+- [ ] Complete manual keyboard/zoom checks and obtain human release approval.
+- [ ] Deploy staging and approve the public release.
+
+Details and deployment boundaries: [Server Readiness](deployment-readiness.md).
 
 ## Release Checklist
 

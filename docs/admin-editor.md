@@ -58,11 +58,12 @@ HTTP-only, SameSite Strict, and Secure in production, with an eight-hour lifetim
 Changing the password hash also invalidates the credential version in cookies.
 Invalid or malformed cookies are treated as signed out.
 
-The login limiter permits ten attempts per 15 minutes per server process. This
-is appropriate for the current single-process local preview. Before running a
-public multi-instance deployment, set `ADMIN_ORIGIN` to the app's exact public
-origin, replace the login limiter with a shared limiter, and configure
-HTTPS, separate runtime/database roles, secret storage, and database backups.
+The login limiter permits ten attempts per rolling 15 minutes per trusted client
+IP. Hosted mode shares counters through PostgreSQL; local loopback development
+uses an in-memory counter. Different clients behind the same NAT share an
+allowance. Before public deployment, verify the exact `ADMIN_ORIGIN`, trusted
+ingress identity header, HTTPS, separate runtime/database roles, secret storage,
+and database backups. See [server readiness](deployment-readiness.md).
 Use Supabase Auth with role-based authorization when adding multiple editors.
 
 ## Verification

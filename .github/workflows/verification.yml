@@ -1,0 +1,98 @@
+name: Release checks
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Tests, builds, and isolated preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: made_for_them_ci
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ci-service-only-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      CI: 'true'
+      PREVIEW_MIGRATION_DATABASE_URL: postgresql://postgres:ci-service-only-password@127.0.0.1:5432/made_for_them_ci
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm test:db
+      - name: Validate free Render configuration
+        run: pnpm render:validate
+      - name: Dependency vulnerability gate
+        run: pnpm audit --prod --audit-level=high
+      - name: Isolated PostgreSQL preview setup
+        run: pnpm preview:setup --render
+      - name: Verify runtime roles and deployment settings
+        run: pnpm deployment:check -- --preview
+      - name: Verify independent PostgreSQL pools
+        run: pnpm test:postgres
+      - name: Build server for preview
+        run: pnpm build:render --preview
+      - name: Install browser
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Verify preview and accessibility
+        run: pnpm test:preview
+      - name: Rehearse backup and recovery in a separate database
+        env:
+          POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
+        run: |
+          docker exec "$POSTGRES_CONTAINER" pg_dump -U postgres -Fc made_for_them_ci > "$RUNNER_TEMP/fixture-backup.dump"
+          docker exec "$POSTGRES_CONTAINER" createdb -U postgres made_for_them_restore_ci
+          docker exec -i "$POSTGRES_CONTAINER" pg_restore -U postgres --exit-on-error -d made_for_them_restore_ci < "$RUNNER_TEMP/fixture-backup.dump"
+          pnpm exec tsx scripts/check-restored-database.ts
+      - name: Build static preview
+        run: pnpm build:github-pages
+      - name: Preserve verification evidence
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: preview-verification
+          path: |
+            playwright-report/
+            test-results/
+            verification-output/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  release-gate:
+    name: Release gate
+    needs: checks
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require successful checks
+        env:
+          RESULT: ${{ needs.checks.result }}
+        run: test "$RESULT" = "success"

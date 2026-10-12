@@ -3,10 +3,12 @@ import { cookies } from "next/headers";
 import { getIronSession } from "iron-session";
 import { getGiftDataSource } from "../db/config";
 import { ownerCredentialVersion } from "./admin-password";
+import { assertOwnerDeployment, configuredAdminOrigin } from "./deployment-config";
 
 type OwnerSession = { owner?: boolean; credentialVersion?: string };
 
 export function adminIsConfigured() {
+  try { assertOwnerDeployment(); } catch { return false; }
   return getGiftDataSource() !== "starter" &&
     /^scrypt:[a-f0-9]{32}:[a-f0-9]{128}$/.test(process.env.ADMIN_PASSWORD_HASH ?? "") &&
     (process.env.ADMIN_SESSION_SECRET?.length ?? 0) >= 32;
@@ -20,7 +22,8 @@ export async function getOwnerSession() {
     cookieName: "made-for-them-owner",
     ttl: 8 * 60 * 60,
     cookieOptions: {
-      httpOnly: true, sameSite: "strict" as const, secure: process.env.NODE_ENV === "production", path: "/",
+      httpOnly: true, sameSite: "strict" as const,
+      secure: configuredAdminOrigin()?.startsWith("https:") ?? process.env.NODE_ENV === "production", path: "/",
     },
   };
   try { return await getIronSession<OwnerSession>(store, options); }
